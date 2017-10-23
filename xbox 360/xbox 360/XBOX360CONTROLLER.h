@@ -63,7 +63,8 @@ public:
 	bool connect();
 
 	void render(sf::RenderWindow & window); // draw text
-	void CheckButton();
+	void checkButton();
+	void lastButton();
 };
 
 #endif // ! XBOX360CONTROLLER

@@ -16,11 +16,12 @@ void Game::run() {
 			}
 		}
 
-		m_controller.CheckButton();
+		m_controller.connect();
+		m_controller.checkButton();
 		m_controller.update();
 
 		window.clear(sf::Color(0, 0, 0, 0));
-		window.draw(m_sprite);
+		window.draw(m_sprite); // draw image
 		m_controller.render(window);
 
 		window.display();

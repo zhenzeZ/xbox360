@@ -12,6 +12,8 @@ Xbox360Controller::~Xbox360Controller() {
 
 void Xbox360Controller::update() {
 	sf::Joystick::update();
+	lastButton();
+
 	if (m_currentState.A) {
 		m_previousState.A = true;
 	}
@@ -168,8 +170,8 @@ void Xbox360Controller::update() {
 
 	if (m_currentState.RighThumbStick.y >= 10 || m_currentState.RighThumbStick.y <= -10) {
 		float Ry = m_currentState.RighThumbStick.y;
-		text[17].setString(" y:" + toString(Ry));
-		text[17].setPosition(500, 490);
+		text[17].setString("y:" + toString(Ry));
+		text[17].setPosition(500, 495);
 	}
 	else
 	{
@@ -188,8 +190,8 @@ void Xbox360Controller::update() {
 
 	if (m_currentState.LeftThumbStick.y >= 10 || m_currentState.LeftThumbStick.y <= -10) {
 		float Ly = m_currentState.LeftThumbStick.y;
-		text[19].setString(" y:" + toString(Ly));
-		text[19].setPosition(100, 330);
+		text[19].setString("y:" + toString(Ly));
+		text[19].setPosition(100, 335);
 	}
 	else
 	{
@@ -213,22 +215,18 @@ bool Xbox360Controller::isConnected() {
 void Xbox360Controller::render(sf::RenderWindow & window) {
 	if (m_previousState.Y) {
 		window.draw(text[0]);
-		text[20].setString("Last botton pressed is Y");
 	}
 
 	if (m_previousState.X) {
 		window.draw(text[1]);
-		text[20].setString("Last botton pressed is X");
 	}
 
 	if (m_previousState.B) {
 		window.draw(text[2]);
-		text[20].setString("Last botton pressed is B");
 	}
 
 	if (m_previousState.A) {
 		window.draw(text[3]);
-		text[20].setString("Last botton pressed is A");
 	}
 
 	if (m_previousState.LB) {
@@ -250,10 +248,8 @@ void Xbox360Controller::render(sf::RenderWindow & window) {
 	window.draw(text[8]); // draw letter for Up Dpad buttom 
 	window.draw(text[9]);
 	window.draw(text[10]);
-
-	if (m_previousState.DpadLeft) {
-		window.draw(text[11]);
-	}
+	window.draw(text[11]);
+	
 
 	if (m_previousState.Start) {
 		window.draw(text[12]);
@@ -273,7 +269,30 @@ void Xbox360Controller::render(sf::RenderWindow & window) {
 
 	window.draw(text[20]); // display last button
 }
-void Xbox360Controller::CheckButton() {
+
+void Xbox360Controller::lastButton() {
+	if (!m_currentState.A && m_previousState.A)
+	{
+		text[20].setString("Last botton pressed is A");
+	}
+
+	if (!m_currentState.B && m_previousState.B)
+	{
+		text[20].setString("Last botton pressed is B");
+	}
+
+	if (!m_currentState.X && m_previousState.X)
+	{
+		text[20].setString("Last botton pressed is X");
+	}
+
+	if (!m_currentState.Y && m_previousState.Y)
+	{
+		text[20].setString("Last botton pressed is Y");
+	}
+}
+
+void Xbox360Controller::checkButton() {
 	m_currentState.A = sf::Joystick::isButtonPressed(sf_Joystick_index, 0u);
 	m_currentState.B = sf::Joystick::isButtonPressed(sf_Joystick_index, 1u);
 	m_currentState.X = sf::Joystick::isButtonPressed(sf_Joystick_index, 2u);
@@ -292,47 +311,55 @@ void Xbox360Controller::CheckButton() {
 	m_currentState.RighThumbStick.x = sf::Joystick::getAxisPosition(sf_Joystick_index, sf::Joystick::U);
 	m_currentState.RighThumbStick.y = sf::Joystick::getAxisPosition(sf_Joystick_index, sf::Joystick::R);
 
-	if (sf::Joystick::getAxisPosition(sf_Joystick_index, sf::Joystick::PovX) == 7) 
+	if (sf::Joystick::getAxisPosition(sf_Joystick_index, sf::Joystick::PovX) > 1) 
 	{
 		m_currentState.DpadRight = true;
+		text[8].setString("Up");
 	}
 	else 
 	{
 		m_currentState.DpadRight = false;
+		text[8].setString(" ");
 	}
 
-	if (sf::Joystick::getAxisPosition(sf_Joystick_index, sf::Joystick::PovX) == 5)
+	if (sf::Joystick::getAxisPosition(sf_Joystick_index, sf::Joystick::PovX) < -1)
 	{
 		m_currentState.DpadLeft = true;
+		text[9].setString("Down");
 	}
 	else 
 	{
 		m_currentState.DpadLeft = false;
+		text[8].setString(" ");
 	}
 
-	if (sf::Joystick::getAxisPosition(sf_Joystick_index, sf::Joystick::PovY) == 7) 
+	if (sf::Joystick::getAxisPosition(sf_Joystick_index, sf::Joystick::PovY) > 1) 
 	{
 		m_currentState.DpadUp = true;
+		text[10].setString("Right");
 	}
 	else 
 	{
 		m_currentState.DpadUp = false;
+		text[10].setString(" ");
 	}
 	
-	if (sf::Joystick::getAxisPosition(sf_Joystick_index, sf::Joystick::PovY) == 5)
+	if (sf::Joystick::getAxisPosition(sf_Joystick_index, sf::Joystick::PovY) < -1)
 	{
 		m_currentState.DpadDown = true;
+		text[11].setString("Left");
 	}
 	else 
 	{
 		m_currentState.DpadDown = false;
+		text[11].setString(" ");
 	}
 }
 
 void Xbox360Controller::initSprites() {
 	font.loadFromFile("C:\\Windows\\Fonts\\times.ttf");
 
-	for (int i = 0; i < 20; i++) {
+	for (int i = 0; i < 22; i++) {
 		text[i].setFont(font);
 		text[i].setScale(0.7f, 0.7f);
 		text[i].setFillColor(sf::Color::Black);
@@ -362,35 +389,16 @@ void Xbox360Controller::initSprites() {
 	text[7].setString("Clicked"); // RightThumbStickClick
 	text[7].setPosition(400, 500);
 
+	/// <summary>
+	/// set position for dpad position
+	/// </summary>
 	text[8].setPosition(280, 480);
-	if (m_previousState.DpadUp) {
-		text[8].setString("Up");  
-	}
-	else {
-		text[8].setString(" ");
-	}
 
 	text[9].setPosition(280, 480);
-	if (m_previousState.DpadDown) {
-		text[9].setString("Down");
-	}
-	else {
-		text[9].setString(" ");
-	}
 
 	text[10].setPosition(280, 500);
-	if (m_previousState.DpadRight) {
-		text[10].setString("Right");
-	}
-	else {
-		text[10].setString(" ");
-	}
-
 
 	text[11].setPosition(280, 500);
-	if (m_previousState.DpadLeft) {
-		text[11].setString("Left");
-	}
 	
 
 	text[12].setString("Start Pressed"); // strat button
@@ -406,7 +414,7 @@ void Xbox360Controller::initSprites() {
 		text[21].setString("Controller not found");
 	}
 
-	text[20].setPosition(650, 200);
+	text[20].setPosition(700, 200);
 }
 
 std::string Xbox360Controller::toString(float num) {
